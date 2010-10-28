@@ -20,6 +20,28 @@ util.puts("listening on http://localhost:"+port+"/")
 
 
 // handlers
+function uploadHandler(req, res) {
+  var form = new formidable.IncomingForm()
+  , files = []
+  , fields = []
+  form.uploadDir = tmpDir
+  form
+    .on("file", function(name, file) {
+      var tmpFile = file.path
+        , fileName = path.basename(tmpFile)
+        , ext = path.extname(params(req, "name"))
+        , saveFile = saveDir+"/"+fileName+ext
+      fs.rename(tmpFile, saveFile, function(err) {
+        if (err) throw err
+      })
+    })
+    .on("end", function() {
+      res.writeHead(200, {"Content-Type": "text/plain"})
+      res.end()
+    })
+  form.parse(req)
+}
+
 function defaultHandler(req, res) {
   if (url.parse(req.url).pathname.match("^/static/(.*)$"))
     staticHandler(req, res)
@@ -36,32 +58,9 @@ function staticHandler(req, res) {
   })
 }
 
-function uploadHandler(req, res) {
-  var form = new formidable.IncomingForm()
-  , files = []
-  , fields = []
-  form.uploadDir = tmpDir
-  form.keepExtensions = true
-
-  form
-    .on("field", function(name, value) {
-    })
-    .on("file", function(name, file) {
-      var tmpFile = file.path
-        , fileName = path.basename(tmpFile)
-        , saveFile = saveDir+"/"+fileName
-      fs.rename(tmpFile, saveFile, function(err) {
-        if (err) throw err
-      })
-    })
-    .on("end", function() {
-      res.writeHead(200, {"Content-Type": "text/plain"})
-      res.end()
-    })
-  form.parse(req)
-}
-
 // utils
+function p(x) { console.log(util.inspect(x)) }
+
 function notFound(res) {
   res.writeHead(404, {"Content-Type": "text/plain"})
   res.end("Page is not found.")
@@ -72,7 +71,9 @@ function redirect(res) {
   res.end()
 }
 
-function p(x) { console.log(util.inspect(x)) }
+function params(req, name) {
+  return url.parse(req.url, true).query[name]
+}
 
 function ctypes(file) {
   var types =

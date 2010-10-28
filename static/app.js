@@ -1,41 +1,80 @@
 // Convert divs to queue widgets when the DOM is ready
 $(function() {
-  $("#uploader").pluploadQueue(
+  var uploader = new plupload.Uploader(
     { runtimes: "html5, flash"
+    , browse_button: 'select-files'
+    , container: 'container'
+    , drop_element: 'drop-files'
     , url: "/upload"
     , max_file_size: "10mb"
     , chunk_size: "1mb"
-    , unique_names: true
-    // Resize images on clientside if we can
+    , unique_names: false
     , resize: { width: 320, height: 240, quality: 90 }
-    // Specify what files to browse for
     , filters:
-      [ { title: "Image files", extensions: "jpg, gif, png" }
+      [ { title: "Image files", extensions: "jpg,jpeg,gif,png" }
       , { title: "Zip files", extensions: "zip" }
       ]
-    // Flash settings
     , flash_swf_url : '/static/plupload.flash.swf'
     }
   )
 
-  // Client side form validation
-  $('form').submit(function(e) {
-    var uploader = $('#uploader').pluploadQueue()
-      // Validate number of uploaded files
-    if (uploader.total.uploaded == 0) {
-      // Files in queue upload them first
-      if (uploader.files.length > 0) {
-    	// When all files are uploaded submit form
-    	uploader.bind('UploadProgress', function() {
-    	  if (uploader.total.uploaded == uploader.files.length)
-    		$('form').submit()
-    	})
-    	uploader.start()
-      } else {
-    	alert('You must at least upload one file.')
-      }
-      e.preventDefault()
+  uploader.bind("Init", function(up, params) {
+    $("#file-list").html("<div>Current runtime: "+params.runtime+"</div>")
+  })
+
+  uploader.bind("FilesAdded", function(up, files) {
+    $.each(files, function(i, file) {
+      $("#file-list").append(
+        [ '<div id="', file.id, '">'
+        , file.name, ' ('
+        , plupload.formatSize(file.size)
+        , ') <a class="delete-file" href="#">[x]</a>'
+        ,  '<b></b></div>'
+        ].join("")
+      )
+    })
+    up.refresh()
+  })
+
+  uploader.bind("UploadProgress", function(up, file) {
+    $("#"+file.id+" b").html(" " + file.percent + "%")
+    $("a.delete-file").remove()
+  })
+
+  uploader.bind("Error", function(up, err) {
+    $("#file-list").append(
+      [ '<div>Error: ', err.code
+      , ' Message: ', err.message
+      , (err.file ? ' File: '+err.file.name : '')
+      ].join("")
+    )
+    up.refresh()
+  })
+
+  uploader.bind("FileUploaded", function(up, file) {
+    $("#"+file.id+" b").html(" 100%")
+    up.refresh()
+  })
+
+  uploader.init()
+
+  $("#upload-files").click(function(e) {
+    if (uploader.total.queued > 0) {
+   	    //if (uploader.total.uploaded == uploader.files.length)
+    	//$('form').submit()
+   	  uploader.start()
+    } else {
+      alert('You must at least upload one file.')
     }
+    e.preventDefault()
+  })
+
+  $("a.delete-file").live("click", function(e){
+    var div = $(this).parent()
+      , file = uploader.getFile(div.get(0).id)
+    uploader.removeFile(file)
+    div.remove()
+    e.preventDefault()
   })
 })
 

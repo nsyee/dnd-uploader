@@ -14,10 +14,13 @@
   </head>
   <body>
     <h1>file upload</h1>
+  	<div id="container">
     <form action="/upload" method="post">
-  	<div id="uploader">
-	  <p>You browser doesn't have Flash or HTML5 support.</p>
-	</div>
+	  <p><a id="select-files" href="#">[Select files]</a></p>
+      <p><div id="drop-files">drop files here.</div></p>
+	  <p><a id="upload-files" href="#">[Upload files]</a></p>
+	  <div id="file-list">No runtime found.</div><br>
     </form>
+	</div>
   </body>
 </html>
