@@ -1,0 +1,9 @@
+[submodule "lib/socket.io"]
+	path = lib/socket.io
+	url = https://github.com/LearnBoost/Socket.IO-node.git
+[submodule "lib/dirty"]
+	path = lib/dirty
+	url = https://github.com/felixge/node-dirty.git
+[submodule "lib/formidable"]
+	path = lib/formidable
+	url = https://github.com/felixge/node-formidable.git

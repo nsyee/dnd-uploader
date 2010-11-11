@@ -1,0 +1,30 @@
+h1 {color: #436979;}
+a {color: #8CACBB;}
+
+#container {width: 900px; margin: 0 auto;}
+#left {float: left; width: 50px;}
+#right {float: left; width: 50px;}
+#main {float: left; width: 100%; margin: 0 50px;}
+#drop-files {
+  width: 800px;
+  height: 120px;
+  border-radius: 20px;
+  -moz-border-radius: 20px;
+  -webkit-border-radius: 20px;
+  border: 3px solid gray;
+  text-align: center;
+}
+#drop-files p { line-height: 100px; }
+#file-list li {
+  list-style-type: none;
+  float: left;
+  height: 200px;
+  width: 200px;
+  margin: 0 2px 2px 0;
+}
+.imgbox {
+  width:200px;
+  height: 200px;
+  text-align: center;
+}
+#file-list li img { max-width: 200px; max-height: 200px; border: 0; }

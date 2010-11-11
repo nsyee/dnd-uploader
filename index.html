@@ -2,25 +2,42 @@
 <html>
   <head>
     <meta charset="utf-8">
-    <title>file upload</title>
+    <title>file uploader</title>
+    <link rel="stylesheet" href="/static/ui.notify.css" type="text/css"/>
+    <link rel="stylesheet" href="/static/base.css" type="text/css"/>
     <script type="text/javascript" src="http://www.google.com/jsapi"></script>
 	<script type="text/javascript">
 	  google.load("jquery", "1.4");
+	  google.load("jqueryui", "1.8");
 	</script>
-    <!-- Load plupload and all it's runtimes and finally the jQuery queue widget -->
     <script type="text/javascript" src="/static/plupload.full.min.js"></script>
     <script type="text/javascript" src="/static/jquery.plupload.queue.min.js"></script>
+    <script type="text/javascript" src="/static/jquery.notify.js"></script>
+    <script type="text/javascript" src="/socket.io/socket.io.js"></script>
     <script type="text/javascript" src="/static/app.js"></script>
   </head>
   <body>
-    <h1>file upload</h1>
   	<div id="container">
-    <form action="/upload" method="post">
-	  <p><a id="select-files" href="#">[Select files]</a></p>
-      <p><div id="drop-files">drop files here.</div></p>
-	  <p><a id="upload-files" href="#">[Upload files]</a></p>
-	  <div id="file-list">No runtime found.</div><br>
-    </form>
-	</div>
+      <div id="left"></div>
+      <div id="main">
+        <div id="main-inner">
+          <h1>file uploader</h1>
+          <div id="show-runtime">No runtime found.</div>
+          <form action="/upload" method="post">
+	        <div id="dialog"><a id="select-files" href="#">[ダイアログでファイル選択]</a></div>
+            <div id="drop-files"><p>画像ファイルをここにドラッグ&ドロップしてください</p></div>
+            <p><div id="file-list"><ul></ul></div></p>
+          </form>
+	    </div>
+      </div>
+      </div id="right"></div>
+      <div id="notify">
+	  <div id="upload-notify">
+        <div id="#{id}">
+        <h1>#{title}</h1>
+        <p>#{text}<b></b></p>
+        </div>
+      </div>
+    </div>
   </body>
 </html>
