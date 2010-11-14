@@ -1,7 +1,8 @@
 ドラッグ&ドロップで画像ファイルをアップロードするサンプルアプリ。複数ファイル同時アップに対応しています
 
 This is a sample application to upload multiple files with drag'n drop.
-Chrome9 dev, Firefox3.6, Safari5 work. IE does'nt work with Drag&Drop (also Opera?)
+
+Chrome9 dev, Firefox3.6, Safari5 work. IE doesn't work with Drag&Drop (also Opera?)
 
 
 # Requirement
