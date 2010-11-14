@@ -1,53 +1,58 @@
 require.paths.unshift(__dirname+"/lib")
 var io         = require("socket.io")
   , formidable = require("formidable")
-  , db         = require("dirty")("files.db")
+  , dirty      = require("dirty")
   , server     = require("http").createServer()
   , util       = require("util")
   , fs         = require("fs")
   , path       = require("path")
   , url        = require("url")
-  , emitter    = new process.EventEmitter()
-  , port       = 80
+
   , tmpDir     = path.join(__dirname, "tmp")
-  , saveDir    = path.join(__dirname, "static/upload")
+  , saveDir    = path.join(__dirname, "static", "upload")
+  , port       = 80
   , files      = []
-  , pathname
+  , db
 
-server.on("request", function(req, res) {
-  switch (url.parse(req.url).pathname) {
-   case "/"      : staticHandler(req, res);  break;
-   case "/upload": uploadHandler(req, res);  break;
-   default       : defaultHandler(req, res); break;
-  }
-})
+  , routes     =
+      function(req, res) {
+        switch (url.parse(req.url).pathname) {
+          case "/"      : staticHandler(req, res);  break;
+          case "/upload": uploadHandler(req, res);  break;
+          default       : defaultHandler(req, res); break;
+        }
+      }
 
-db.on("load", function() {
+db = dirty("files.db")
+db.on("load", start_app)
+
+
+function start_app() {
   db.forEach(function(key, val) {
     files.push(val)
   })
 
-  ;[tmpDir, saveDir].forEach(function(dir) {
-    path.exists(dir, function(exists) {
-      if (!exists) fs.mkdirSync(dir, 0755)
-    })
-  })
+  check_dirs([tmpDir, saveDir])
 
+  server.on("request", routes)
   server.listen(port)
-  util.puts("listening on http://localhost:"+port+"/")
 
   io = io.listen(server)
   io.on("connection", function(client) {
     client.send({ type: "load", files: files })
+  })
 
-    client.on("message", function(data) {
-      client.broadcast(data)
-    })
-    emitter.on("uploaded", function(file) {
-      client.send({ type: "uploaded", files: [file] })
+  util.puts("listening on http://localhost:"+port+"/")
+}
+
+function check_dirs(dirs) {
+  dirs.forEach(function(dir) {
+    path.exists(dir, function(exists) {
+      if (!exists) fs.mkdirSync(dir, 0755)
     })
   })
-})
+}
+
 
 // handlers
 function uploadHandler(req, res) {
@@ -58,12 +63,12 @@ function uploadHandler(req, res) {
       var tmpFile = file.path
         , ext = path.extname(params(req, "name")).toLowerCase()
         , fileName = path.basename(tmpFile)+ext
-        , saveFile = saveDir+"/"+fileName
+        , saveFile = path.join(saveDir, fileName)
       fs.rename(tmpFile, saveFile, function(err) {
         if (err) throw err
         db.set(new Date().getTime(), fileName, function() {
           files.push(fileName)
-          emitter.emit("uploaded", fileName)
+          io.broadcast({ type: "uploaded", files: [fileName] })
         })
       })
     })
@@ -90,12 +95,13 @@ function staticHandler(req, res) {
   })
 }
 
+
 // utils
 function p(x) { console.log(util.inspect(x)) }
 
 function notFound(res) {
   res.writeHead(404, {"Content-Type": "text/plain"})
-  res.end("Page is not found.")
+  res.end("Resource is not found.")
 }
 
 function redirect(res, dest) {

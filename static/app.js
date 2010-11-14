@@ -121,13 +121,14 @@ $(function() {
       fileName = files[i]
       $("#file-list").prepend($(
         [ '<li id="file-', "", '">'
-        , '<a href="/static/upload/',fileName,'" target="_blank">'
+        , '<a id="fileName" href="/static/upload/',fileName,'">'
         , '<div class="imgbox">'
-        , '<img src="/static/upload/',fileName,'"/>'
+        , '<img alt="fileName" src="/static/upload/',fileName,'"/>'
         , '</div></a></li>'
         ].join("")
       ).fadeIn(1000))
     }
+    $("#file-list li a").fancybox();
   }
 
   uploader.init()
