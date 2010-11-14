@@ -45,14 +45,6 @@ function start_app() {
   util.puts("listening on http://localhost:"+port+"/")
 }
 
-function check_dirs(dirs) {
-  dirs.forEach(function(dir) {
-    path.exists(dir, function(exists) {
-      if (!exists) fs.mkdirSync(dir, 0755)
-    })
-  })
-}
-
 
 // handlers
 function uploadHandler(req, res) {
@@ -98,6 +90,14 @@ function staticHandler(req, res) {
 
 // utils
 function p(x) { console.log(util.inspect(x)) }
+
+function check_dirs(dirs) {
+  dirs.forEach(function(dir) {
+    path.exists(dir, function(exists) {
+      if (!exists) fs.mkdirSync(dir, 0755)
+    })
+  })
+}
 
 function notFound(res) {
   res.writeHead(404, {"Content-Type": "text/plain"})
