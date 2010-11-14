@@ -28,3 +28,6 @@ node-v0.2.4+
 
 # License
 This application is licensed under the MIT license exclude above modules and libraries.
+
+# TODO
+Plupload doesn't upload files asynchronously? check detail.
