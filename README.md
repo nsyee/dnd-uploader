@@ -6,7 +6,7 @@ Chrome9 dev, Firefox3.6, Safari5 work. IE doesn't work with Drag&Drop (also Oper
 
 
 # Requirement
-node-v0.2.4, v.0.3.0
+node-v0.2.4+
 
 # Installation
 
@@ -21,7 +21,7 @@ node-v0.2.4, v.0.3.0
 * [socket.io](http://socket.io/)
 
 # Using Client side libraries
-* [plupload](http://www.plupload.com/)
+* [Plupload](http://www.plupload.com/)
 * [jquery-notify](https://github.com/ehynds/jquery-notify)
 * [fancybox](http://fancybox.net/) 
 * [socket.io](http://socket.io/)
